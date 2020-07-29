@@ -11,12 +11,11 @@ import java.util.*;
 public class WebManager {
 
     private final WebDriver driver;
-    private final String baseUrl = "https://www.depop.com/search/?q=";
     private List<Item> oldItems;
     private List<Item> newItems;
     private Map<String, List<Item>> itemsPerTag = new HashMap<>();
     private Set<Item> newItemsToShow = new HashSet<>();
-    private final String[] tags = {"golf wang", "golf le fleur", "le fleur"};
+    private final String[] tags = {"golf wang", "#golflefleur", "le fleur"};
 
     public WebManager(final WebDriver driver) {
         this.driver = driver;
@@ -30,6 +29,12 @@ public class WebManager {
 
     public void clearNewItems(){
         getNewItemsToShow().clear();
+    }
+
+    public void clearFirst20NewItems(){
+        Item[] itemArray = (Item[]) getNewItemsToShow().toArray();
+        Set<Item> updatedItems = new HashSet<>(Arrays.asList(itemArray).subList(20, itemArray.length));
+        setNewItemsToShow(updatedItems);
     }
 
     public void reloadItems() {
@@ -54,7 +59,8 @@ public class WebManager {
 
     public List<Item> getItemsFromPage(String searchPhrase) {
 
-        String url = baseUrl + searchPhrase;
+        String baseUrl = "https://www.depop.com/search/?q=";
+        String url = baseUrl + searchPhrase.replaceAll("#", "%23");
         driver.get(url);
         List<WebElement> aElements = driver.findElements(By.tagName("a"));
 

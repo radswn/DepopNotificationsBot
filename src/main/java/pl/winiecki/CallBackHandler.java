@@ -114,11 +114,19 @@ public class CallBackHandler {
                             sendTextMessage(senderId, "No new items found :(");
                         else {
                             sendTextMessage(senderId, "Found " + itemsToShow.size() + " new items:");
+                            int counter = 0;
+
                             for (Item it : itemsToShow) {
                                 String message = it.toString();
                                 sendTextMessage(senderId, message);
+                                counter ++;
+                                if(counter == 20)
+                                    break;
                             }
-                            manager.clearNewItems();
+                            if(itemsToShow.size() <= 20)
+                                manager.clearNewItems();
+                            else
+                                manager.clearFirst20NewItems();
                         }
                         break;
                     }
@@ -201,9 +209,7 @@ public class CallBackHandler {
             final String senderId = event.getSender().getId();
 
             if (messageIds != null) {
-                messageIds.forEach(messageId -> {
-                    logger.info("Received delivery confirmation for message '{}'", messageId);
-                });
+                messageIds.forEach(messageId -> logger.info("Received delivery confirmation for message '{}'", messageId));
             }
 
             logger.info("All messages before '{}' were delivered to user '{}'", watermark, senderId);
