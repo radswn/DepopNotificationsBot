@@ -32,9 +32,10 @@ public class WebManager {
     }
 
     public void clearFirst20NewItems(){
-        Item[] itemArray = (Item[]) getNewItemsToShow().toArray();
-        Set<Item> updatedItems = new HashSet<>(Arrays.asList(itemArray).subList(20, itemArray.length));
-        setNewItemsToShow(updatedItems);
+        List<Item> itemList = new ArrayList<>(getNewItemsToShow());
+        itemList.subList(0,20).clear();
+        Set<Item> newSet = new HashSet<>(itemList);
+        setNewItemsToShow(newSet);
     }
 
     public void reloadItems() {
@@ -45,7 +46,7 @@ public class WebManager {
             setNewItems(getItemsFromPage(query));
 
             for (Item item : newItems) {
-                if (!oldItems.contains(item)) {
+                if (!getOldItems().contains(item)) {
                     getNewItemsToShow().add(item);
                 } else break;
             }
